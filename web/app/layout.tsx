@@ -15,6 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <link rel="stylesheet" href="/para.css" />
+      </head>
       <body className="antialiased" suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>

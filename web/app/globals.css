@@ -122,6 +122,13 @@ body {
   -webkit-backdrop-filter: blur(12px);
 }
 
+.glass-panel-light {
+  background: var(--glass-bg-light);
+  border: 1px solid var(--glass-border-light);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
 /*
   Micro-Animations
 */
