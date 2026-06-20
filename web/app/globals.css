@@ -1,0 +1,148 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Background Gradient Stops */
+  --surface-top: #FFFFFF;
+  --surface-mid: #B8C5D0;        /* desaturated cool grey-blue */
+  --surface-bottom: #1A2F2A;     /* deep dark teal/slate green */
+
+  /* UI Surfaces */
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-bg-light: rgba(0, 0, 0, 0.04);
+  --glass-border-light: rgba(0, 0, 0, 0.08);
+
+  /* Ink */
+  --ink-on-dark: #FFFFFF;
+  --ink-on-light: #1A1A1A;
+  --ink-muted: rgba(255, 255, 255, 0.6);
+  --ink-muted-light: rgba(0, 0, 0, 0.5);
+
+  /* Accents */
+  --accent-green: #34D399;       /* status dot / success */
+  --accent-amber: #FBBF24;       /* warning / in-progress */
+  --accent-red: #F87171;         /* error / killed */
+  --accent-blue: #60A5FA;        /* info / queued */
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.12);
+  --shadow-glass: 0 8px 32px rgba(0,0,0,0.18);
+
+  /* Radii */
+  --radius-pill: 999px;
+  --radius-card: 16px;
+  --radius-sm: 8px;
+
+  /* Transitions */
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: var(--ink-on-light);
+  background: var(--surface-top);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 
+  The Gradient & Vertical Lines (Landing Page)
+*/
+.theme-landing {
+  position: relative;
+  background-color: var(--surface-bottom);
+  background-image: linear-gradient(180deg, var(--surface-top) 0%, var(--surface-mid) 40%, var(--surface-bottom) 100%);
+  background-attachment: fixed;
+  color: var(--ink-on-dark);
+}
+
+.theme-landing::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  /* Prominent vertical lines grid */
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 80px 100%;
+  background-position: center;
+  z-index: 0;
+  /* Fade out the lines at the very bottom for a clean finish */
+  -webkit-mask-image: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, transparent 100%);
+  mask-image: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,1) 70%, transparent 100%);
+}
+
+/* 
+  The Dark Theme (Dashboard Page)
+*/
+.theme-dashboard {
+  background: #0D1412; /* even darker variant of the teal base */
+  color: var(--ink-on-dark);
+}
+
+/*
+  Typography classes
+*/
+.font-display-sans {
+  font-family: 'Inter', sans-serif;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+.font-display-serif {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-weight: 400;
+}
+
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/*
+  Glassmorphism Utilities
+*/
+.glass-panel {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/*
+  Micro-Animations
+*/
+@keyframes pulseGlow {
+  0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); }
+  70% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+}
+
+@keyframes pulseDot {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
+  70% { transform: scale(1.05); box-shadow: 0 0 0 4px rgba(52, 211, 153, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
