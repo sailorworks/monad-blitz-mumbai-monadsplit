@@ -27,7 +27,7 @@ export default function MarketingPage() {
           </h1>
 
           <p className="text-xl md:text-2xl font-light text-[var(--ink-muted-light)] max-w-2xl mx-auto leading-relaxed text-balance">
-            The on-chain CFO for your autonomous AI agents. <br className="hidden md:block"/> Budget, control, audit.
+            The prequel to building your product. <br className="hidden md:block"/> Describe your idea, set a budget, get research.
           </p>
 
           <HeroInput />
@@ -72,22 +72,22 @@ export default function MarketingPage() {
                 <div className="flex gap-4">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--ink-on-light)] text-[var(--ink-on-dark)] flex items-center justify-center font-bold">1</div>
                   <div>
-                    <h4 className="text-lg font-bold text-[var(--ink-on-light)]">Register your Agent</h4>
-                    <p className="text-[var(--ink-muted-light)]">Deploy your agent and assign it a unique on-chain identity.</p>
+                    <h4 className="text-lg font-bold text-[var(--ink-on-light)]">Describe your Product Idea</h4>
+                    <p className="text-[var(--ink-muted-light)]">Tell us what you want to build. Our agent will research the market for you.</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--ink-on-light)] text-[var(--ink-on-dark)] flex items-center justify-center font-bold">2</div>
                   <div>
-                    <h4 className="text-lg font-bold text-[var(--ink-on-light)]">Define the Policy</h4>
-                    <p className="text-[var(--ink-muted-light)]">Set budget limits and allowlist authorized vendors via the dashboard.</p>
+                    <h4 className="text-lg font-bold text-[var(--ink-on-light)]">Set Budget & Policies</h4>
+                    <p className="text-[var(--ink-muted-light)]">Choose a USDC budget and allowlist the APIs your agent can spend on. Every purchase is governed on-chain.</p>
                   </div>
                 </div>
                 <div className="flex gap-4">
                   <div className="flex-shrink-0 w-8 h-8 rounded-full bg-[var(--ink-on-light)] text-[var(--ink-on-dark)] flex items-center justify-center font-bold">3</div>
                   <div>
-                    <h4 className="text-lg font-bold text-[var(--ink-on-light)]">Autonomous Execution</h4>
-                    <p className="text-[var(--ink-muted-light)]">The agent transacts freely within its boundaries. Real-time reporting feeds back to your CFO dashboard.</p>
+                    <h4 className="text-lg font-bold text-[var(--ink-on-light)]">Get your Research Document</h4>
+                    <p className="text-[var(--ink-muted-light)]">The agent researches autonomously within your guardrails and delivers a comprehensive report — safely within budget.</p>
                   </div>
                 </div>
               </div>

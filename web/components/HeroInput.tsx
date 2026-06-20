@@ -11,9 +11,9 @@ export default function HeroInput() {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (prompt.trim()) {
-      router.push(`/dashboard?prompt=${encodeURIComponent(prompt)}`);
+      router.push(`/configure?prompt=${encodeURIComponent(prompt)}`);
     } else {
-      router.push('/dashboard');
+      router.push('/configure');
     }
   };
 
