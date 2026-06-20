@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect, useCallback } from 'react';
 import { useSearchParams } from 'next/navigation';
 
 const VENDOR_MAP: Record<string, { name: string; icon: string }> = {
@@ -21,19 +21,165 @@ const MOCK_EVENTS = [
   { id: '6', time: '12:02:40', vendor: 'openai', amount: 1.20, status: 'approved' as const },
 ];
 
-function DashboardInner() {
-  const searchParams = useSearchParams();
-  const prompt = searchParams.get('prompt') || 'Research competitors for my product';
-  const initialBudget = searchParams.get('budget') || '50';
-  const initialPerTx = searchParams.get('perTxLimit') || '10';
-  const vendorParam = searchParams.get('vendors') || 'openai,firecrawl';
-  const vendors = vendorParam.split(',').filter(Boolean);
+/* ─── Simulation Steps ─── */
+interface SimStep {
+  label: string;
+  detail: string;
+  icon: string;
+  duration: number; // ms to stay on this step
+}
 
+function getSimSteps(prompt: string, budget: string, vendors: string[]): SimStep[] {
+  const vendorNames = vendors.map(v => VENDOR_MAP[v]?.name).filter(Boolean).join(', ');
+  return [
+    { label: 'Registering Agent', detail: 'Creating on-chain identity on Monad…', icon: '🆔', duration: 1400 },
+    { label: 'Setting Budget Policy', detail: `Deploying $${budget} USDC budget to Treasury Vault…`, icon: '💰', duration: 1200 },
+    { label: 'Configuring Allowlist', detail: `Allowlisting vendors: ${vendorNames}`, icon: '🛡️', duration: 1000 },
+    { label: 'Policy Check', detail: 'Running checkSpend() — all 6 on-chain checks…', icon: '✅', duration: 1100 },
+    { label: 'Initializing Research', detail: `Task: "${prompt.slice(0, 60)}${prompt.length > 60 ? '…' : ''}"`, icon: '🔬', duration: 1300 },
+    { label: 'Agent Live', detail: 'Your agent is now transacting on Monad. Redirecting…', icon: '🚀', duration: 800 },
+  ];
+}
+
+/* ─── Simulation Screen ─── */
+function SimulationScreen({ prompt, budget, vendors, onComplete }: {
+  prompt: string;
+  budget: string;
+  vendors: string[];
+  onComplete: () => void;
+}) {
+  const steps = getSimSteps(prompt, budget, vendors);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+
+  useEffect(() => {
+    if (currentStep >= steps.length) {
+      // Small delay before showing dashboard
+      const t = setTimeout(onComplete, 400);
+      return () => clearTimeout(t);
+    }
+
+    const t = setTimeout(() => {
+      setCompletedSteps(prev => [...prev, currentStep]);
+      setCurrentStep(prev => prev + 1);
+    }, steps[currentStep].duration);
+
+    return () => clearTimeout(t);
+  }, [currentStep, steps, onComplete]);
+
+  const overallProgress = Math.min(((currentStep) / steps.length) * 100, 100);
+
+  return (
+    <div className="max-w-2xl mx-auto w-full flex flex-col items-center justify-center min-h-[60vh] animate-[fadeUp_0.4s_ease-out]">
+      
+      {/* Header */}
+      <div className="glass-panel px-4 py-1.5 rounded-[var(--radius-pill)] inline-flex items-center gap-2 mb-8">
+        <div className="w-2 h-2 rounded-full bg-[var(--accent-amber)] animate-[pulseDot_2s_infinite]"></div>
+        <span className="text-sm font-medium tracking-wide text-[var(--ink-on-light)]">Deploying on Monad</span>
+      </div>
+
+      <h1 className="text-4xl md:text-5xl font-display-sans tracking-tight text-[var(--ink-on-light)] mb-3 text-center">
+        Setting up your <span className="font-display-serif">agent</span>
+      </h1>
+      <p className="text-[var(--ink-muted-light)] text-lg mb-12 text-center">
+        Deploying smart contracts and configuring policies on-chain…
+      </p>
+
+      {/* Progress bar */}
+      <div className="w-full h-1 bg-black/5 rounded-full overflow-hidden mb-10">
+        <div 
+          className="h-full bg-[var(--accent-green)] rounded-full transition-all duration-500 ease-out"
+          style={{ width: `${overallProgress}%` }}
+        ></div>
+      </div>
+
+      {/* Steps */}
+      <div className="w-full space-y-3">
+        {steps.map((step, i) => {
+          const isCompleted = completedSteps.includes(i);
+          const isActive = currentStep === i;
+          const isPending = !isCompleted && !isActive;
+
+          return (
+            <div
+              key={i}
+              className={`flex items-center gap-4 p-4 rounded-[var(--radius-card)] transition-all duration-300 ${
+                isActive
+                  ? 'glass-panel shadow-[var(--shadow-sm)]'
+                  : isCompleted
+                  ? 'bg-black/[0.02]'
+                  : 'opacity-40'
+              }`}
+            >
+              {/* Status indicator */}
+              <div className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-lg">
+                {isCompleted ? (
+                  <div className="w-6 h-6 rounded-full bg-[var(--accent-green)] flex items-center justify-center">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M20 6L9 17l-5-5" />
+                    </svg>
+                  </div>
+                ) : isActive ? (
+                  <div className="w-6 h-6 rounded-full border-2 border-[var(--accent-amber)] border-t-transparent animate-spin"></div>
+                ) : (
+                  <div className="w-6 h-6 rounded-full border-2 border-black/10"></div>
+                )}
+              </div>
+
+              {/* Icon */}
+              <span className="text-xl flex-shrink-0">{step.icon}</span>
+
+              {/* Text */}
+              <div className="flex-1 min-w-0">
+                <div className={`font-display-sans text-sm font-medium ${
+                  isPending ? 'text-[var(--ink-muted-light)]' : 'text-[var(--ink-on-light)]'
+                }`}>
+                  {step.label}
+                </div>
+                {(isActive || isCompleted) && (
+                  <div className="text-xs text-[var(--ink-muted-light)] mt-0.5 truncate">
+                    {step.detail}
+                  </div>
+                )}
+              </div>
+
+              {/* Timing */}
+              {isCompleted && (
+                <span className="text-xs font-mono text-[var(--accent-green)] flex-shrink-0">
+                  {(step.duration / 1000).toFixed(1)}s
+                </span>
+              )}
+              {isActive && (
+                <span className="text-xs font-mono text-[var(--accent-amber)] flex-shrink-0 animate-pulse">
+                  running…
+                </span>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Monad branding */}
+      <div className="mt-10 text-xs text-[var(--ink-muted-light)] font-mono flex items-center gap-2">
+        <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] animate-pulse"></span>
+        10,000 TPS · 400ms blocks · 800ms finality
+      </div>
+    </div>
+  );
+}
+
+
+/* ─── Dashboard View (unchanged) ─── */
+function DashboardView({ prompt, budget: initialBudget, perTxLimit: initialPerTx, vendors }: {
+  prompt: string;
+  budget: string;
+  perTxLimit: string;
+  vendors: string[];
+}) {
   const [budget, setBudget] = useState(initialBudget);
   const [perTxLimit, setPerTxLimit] = useState(initialPerTx);
   const [isEditingBudget, setIsEditingBudget] = useState(false);
 
-  // Simulated spend data
   const totalSpent = 8.20;
   const budgetNum = parseFloat(budget) || 50;
   const progressPercent = Math.min((totalSpent / budgetNum) * 100, 100);
@@ -68,7 +214,6 @@ function DashboardInner() {
 
       {/* Budget & Policy Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-
         {/* Budget Card */}
         <div className="glass-panel p-6 rounded-[var(--radius-card)] col-span-1 md:col-span-2">
           <div className="flex items-center justify-between mb-4">
@@ -217,6 +362,43 @@ function DashboardInner() {
         </div>
       </div>
     </div>
+  );
+}
+
+
+/* ─── Orchestrator ─── */
+function DashboardInner() {
+  const searchParams = useSearchParams();
+  const prompt = searchParams.get('prompt') || 'Research competitors for my product';
+  const budget = searchParams.get('budget') || '50';
+  const perTxLimit = searchParams.get('perTxLimit') || '10';
+  const vendorParam = searchParams.get('vendors') || 'openai,firecrawl';
+  const vendors = vendorParam.split(',').filter(Boolean);
+
+  const [simDone, setSimDone] = useState(false);
+
+  const handleSimComplete = useCallback(() => {
+    setSimDone(true);
+  }, []);
+
+  if (!simDone) {
+    return (
+      <SimulationScreen
+        prompt={prompt}
+        budget={budget}
+        vendors={vendors}
+        onComplete={handleSimComplete}
+      />
+    );
+  }
+
+  return (
+    <DashboardView
+      prompt={prompt}
+      budget={budget}
+      perTxLimit={perTxLimit}
+      vendors={vendors}
+    />
   );
 }
 
